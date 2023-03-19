@@ -21,7 +21,7 @@ module.exports.addToCart=async function addToCart(req,res){
             for(let i=0;i<dataObj.length;i++){
                 let prod=await productModel.findOne({_id:dataObj[i].product});
                 let updatedData=await cartModel.findOneAndUpdate({user:req.id,"cartItems.product":dataObj[i].product},
-                            {"$inc":{"cartItems.$.price":prod.price,"cartItems.$.quantity":dataObj[i].quantity},"price":prod.price*dataObj[i].quantity},false,true);
+                            {"$inc":{"cartItems.$.quantity":dataObj[i].quantity,"price":prod.price*dataObj[i].quantity},"cartItems.$.price":prod.price},false,true);
                 if(!updatedData){
                     await cartModel.findOneAndUpdate({user:req.id},{"$inc":{"price":prod.price*dataObj[i].quantity}})
                     await cartModel.findOneAndUpdate({user:req.id},{
@@ -57,6 +57,61 @@ module.exports.addToCart=async function addToCart(req,res){
     }
     catch(err){
         return res.status(500).json({
+            message:err.message
+        });
+    }
+}
+
+//allows to delete only 1 items from each product (intentionally done)
+module.exports.deleteFromCart=async function deleteFromCart(req,res){
+    try{
+        let dataObj=req.body.cartItems;
+        for(let i=0;i<dataObj.length;i++){
+            let prod=await cartModel.findOne({user:req.id,'cartItems.product':dataObj[i].product});
+            if(!prod){
+                return res.status(400).json({
+                    message:"Product not found"
+                });
+            }
+        }
+       for(let i=0;i<dataObj.length;i++){
+        let prod=await productModel.findOne({_id:dataObj[i].product});
+        let updatedData=await cartModel.findOneAndUpdate({user:req.id,"cartItems.product":dataObj[i].product},
+                            {"$inc":{"cartItems.$.quantity":-1,"price":prod.price*-1}},false,true);
+        let cart=await cartModel.findOneAndUpdate({user:req.id},
+                            {"$pull":{'cartItems':{quantity:0} }});    
+        //console.log(cart);
+        
+        //currently the product is not deleted from the cart if its quantity=0
+        }
+        return res.json({
+            message:"Product removed from cart successfully"
+        });
+    }
+    catch(err){
+        return res.status(500).json({
+            message:err.message
+        });
+    }
+}
+
+module.exports.getAllCartItems=async function getAllCartItems(req,res){
+    try{
+        let cartItems=await cartModel.find({user:req.id});
+        if(cartItems){
+            return res.json({
+                message:"All cart Items retrieved",
+                data:cartItems
+            });
+        }
+        else{
+            return res.status(400).json({
+                message:"No items in cart"
+            });
+        }
+    }
+    catch(err){
+        return res.json({
             message:err.message
         });
     }

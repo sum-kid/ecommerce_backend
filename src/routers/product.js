@@ -1,5 +1,5 @@
 const express=require('express');
-const { addProduct } = require('../controller/product');
+const { addProduct, updateProduct, deleteProduct, getAllProduct } = require('../controller/product');
 const { protectRoute, isAuthorised } = require('../middleware/authHelper');
 const productRouter=express.Router();
 const multer=require('multer');
@@ -22,5 +22,14 @@ productRouter.use(protectRoute);
 productRouter.use(isAuthorised);
 productRouter.route('/addProduct')    // req.file is the `file name that we give` file
     .post(upload.array('productPicture'),addProduct);
+
+productRouter.route('/updateProduct/:id')
+    .patch(upload.array('productPicture'),updateProduct);
+
+productRouter.route('/deleteProduct/:id')
+    .delete(deleteProduct);
+
+productRouter.route('/getAllProduct')
+    .get(getAllProduct);
 
 module.exports=productRouter;
