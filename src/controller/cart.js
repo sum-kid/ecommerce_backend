@@ -80,9 +80,7 @@ module.exports.deleteFromCart=async function deleteFromCart(req,res){
                             {"$inc":{"cartItems.$.quantity":-1,"price":prod.price*-1}},false,true);
         let cart=await cartModel.findOneAndUpdate({user:req.id},
                             {"$pull":{'cartItems':{quantity:0} }});    
-        //console.log(cart);
-        
-        //currently the product is not deleted from the cart if its quantity=0
+        //items gets deleted from cart if its qty=0
         }
         return res.json({
             message:"Product removed from cart successfully"

@@ -14,7 +14,10 @@ const categorySchema=new mongoose.Schema({
         unique:true
     },
     type:String,
-    categoryImage:String,
+    categoryImage:[
+        //array of img
+          { img: { type: String } }
+      ],
     parentId:String
 },{timestamps:true});
 

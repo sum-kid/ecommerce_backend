@@ -10,8 +10,7 @@ const productSchema=new mongoose.Schema({
       },
       slug:{
           type: String,
-          required: true,
-          unique: true
+          required: true
       },
       price:{
           type: Number,
@@ -50,8 +49,13 @@ const productSchema=new mongoose.Schema({
       updatedAt: {
         type:Date,
         default:Date.now()
-    }
+    },
+      userProduct:{
+        type:String,
+        unique:true
+      }
 },{timestamps: true});
+
 
 const productModel=mongoose.model('productModel',productSchema);
 

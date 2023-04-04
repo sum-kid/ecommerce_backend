@@ -35,10 +35,12 @@ const userRouter=require('./routers/user');
 const categoryRouter=require('./routers/category');
 const productRouter=require('./routers/product');
 const cartRouter=require('./routers/cart');
+const addressRouter = require('./routers/address');
 
 app.use('/user',userRouter);
 app.use('/category',categoryRouter);
 app.use('/product',productRouter);
 app.use('/cart',cartRouter);
+app.use('/address',addressRouter);
 
 

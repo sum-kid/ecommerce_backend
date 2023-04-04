@@ -1,5 +1,5 @@
 const express=require('express');
-const { addProduct, updateProduct, deleteProduct, getAllProduct } = require('../controller/product');
+const { addProduct, updateProduct, deleteProduct, getAllProduct, getProduct, getProductBySlug, getAllProductAdmin } = require('../controller/product');
 const { protectRoute, isAuthorised } = require('../middleware/authHelper');
 const productRouter=express.Router();
 const multer=require('multer');
@@ -18,6 +18,15 @@ const storage = multer.diskStorage({
 
 const upload=multer({storage}); 
 
+productRouter.route('/:slug')
+    .get(getProductBySlug);
+
+productRouter.route('/getProduct/:id')
+    .get(getProduct);
+
+productRouter.route('/getAllProduct')
+    .get(getAllProduct);
+
 productRouter.use(protectRoute);
 productRouter.use(isAuthorised);
 productRouter.route('/addProduct')    // req.file is the `file name that we give` file
@@ -29,7 +38,7 @@ productRouter.route('/updateProduct/:id')
 productRouter.route('/deleteProduct/:id')
     .delete(deleteProduct);
 
-productRouter.route('/getAllProduct')
-    .get(getAllProduct);
+productRouter.route('/getAllProductAdmin')
+    .get(getAllProductAdmin);
 
 module.exports=productRouter;
